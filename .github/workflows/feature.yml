@@ -29,6 +29,6 @@ jobs:
           cd fhel
           make dist
           cp dart/bin/libfhel.so ../bin/libfhel.so
-          ls ../bin
+          echo "Generated 👉 $(ls ../bin)"
 
       - run: dart test
