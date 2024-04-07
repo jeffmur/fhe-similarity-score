@@ -13,6 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout fhel
+        uses: actions/checkout@v4
+        with:
+          repository: jeffmur/fhel
+          path: fhel
+          submodules: 'true'
+
+      - name: Compile fhel
+        run: |
+          cd fhel
+          make dist
+          cp -r dart/bin ../bin
+
       - name: Install Flutter 
         uses: subosito/flutter-action@v2
 
