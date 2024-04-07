@@ -5,7 +5,9 @@ export 'dart:math';
 
 /// Crypto used everywhere
 export 'package:fhel/seal.dart' show Seal;
-export 'package:fhel/afhe.dart' show Plaintext, Ciphertext;
+import 'package:fhel/afhe.dart' show Afhe, Ciphertext;
+export 'package:fhel/afhe.dart' show Afhe, Plaintext, Ciphertext;
+
 
 /// Asserts that [a] and [b] are nearly equal.
 /// 
@@ -20,4 +22,10 @@ void near(double actual, double expected, {double eps = 1e-12, bool relative = f
       expect(actual, greaterThanOrEqualTo(expected-bound));
       expect(actual, lessThanOrEqualTo(expected+bound));
     }
+}
+
+/// Create an encrypted vector from a list of doubles.
+///
+List<Ciphertext> encryptVecDouble(Afhe fhe, List<double> vec) {
+  return vec.map((e) => fhe.encrypt(fhe.encodeDouble(e))).toList();
 }
