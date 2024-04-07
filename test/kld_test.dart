@@ -32,7 +32,7 @@ void main() {
       final cipherX = encryptVecDouble(seal, x);
       final cipherLogX = encryptVecDouble(seal, logX);
 
-      List<Ciphertext> cipherSum = kldCiphertext(seal, cipherX, cipherLogX, y);
+      List<Ciphertext> cipherSum = kldCiphertextVecDouble(seal, cipherX, cipherLogX, y);
 
       List<Plaintext> decrypted = cipherSum.map((e) => seal.decrypt(e)).toList();
       List<double> result = decrypted.map((e) => seal.decodeVecDouble(e, 1).first).toList();
@@ -57,7 +57,7 @@ void main() {
       final cipherX = encryptVecDouble(seal, x);
       final cipherLogX = encryptVecDouble(seal, logX);
 
-      expect(() => kldCiphertext(seal, cipherX, cipherLogX, y), throwsArgumentError);
+      expect(() => kldCiphertextVecDouble(seal, cipherX, cipherLogX, y), throwsArgumentError);
     });
   });
 }
