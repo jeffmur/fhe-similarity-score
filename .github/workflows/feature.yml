@@ -8,7 +8,15 @@ on:
 jobs:
   dart-tests:
     name: Dart Test 🎯
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        unit-test:
+          - os: ubuntu-latest
+            file: libfhel.so
+          - os: macos-latest
+            file: libfhel.dylib
+
+    runs-on: ${{ matrix.unit-test.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,7 +36,7 @@ jobs:
           mkdir bin
           cd fhel
           make dist
-          cp dart/bin/libfhel.so ../bin/libfhel.so
+          cp dart/bin/${{ matrix.unit-test.file }} ../bin/${{ matrix.unit-test.file }}
           echo "Generated 👉 $(ls ../bin)"
 
       - run: dart test
