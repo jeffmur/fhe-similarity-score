@@ -13,7 +13,7 @@ void main() {
     expect(() => kld([0.1, 0.2, 0.7], [0.1, 0.2]), throwsArgumentError);
   });
 
-  test('Encrypted Scalar', () {
+  test('SEAL CKKS', () {
     Seal seal = Seal('ckks');
     String status = seal.genContext({
       'polyModDegree': 8192,
@@ -41,6 +41,25 @@ void main() {
     }
 
     double sum = flat.reduce((value, element) => value + element);
-    near(sum, 0.08512282595722162, eps: 1e-7);
+    near(sum, 0.08512282595722162, eps: 1e-7); // Up-to 7 decimal precision
+  });
+
+  test('SEAL Different length', () {
+    Seal seal = Seal('ckks');
+    String status = seal.genContext({
+      'polyModDegree': 8192,
+      'encodeScalar': pow(2, 40),
+      'qSizes': [60, 40, 40, 60]
+    });
+    expect(status, 'success: valid');
+    seal.genKeys();
+    final x = [0.1, 0.2, 0.7];
+    final logX = x.map((e) => log(e)).toList();
+    final y = [0.2, 0.3];
+
+    final cipherX = x.map((e) => seal.encrypt(seal.encodeDouble(e))).toList();
+    final cipherLogX = logX.map((e) => seal.encrypt(seal.encodeDouble(e))).toList();
+    
+    expect(() => kldCiphertext(seal, cipherX, cipherLogX, y), throwsArgumentError);
   });
 }
