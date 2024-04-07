@@ -4,13 +4,13 @@ import 'test_utils.dart';
 
 void main() {
 
-  group("Baseline", () {
-    test('Simple', () {
+  group("Plaintext", () {
+    test('List<Double>', () {
       expect(kld([0.1, 0.2, 0.7], [0.1, 0.2, 0.7]), 0);
       expect(kld([0.1, 0.2, 0.7], [0.2, 0.3, 0.5]), 0.08512282595722162);
     });
 
-    test('Different length', () {
+    test('Throw on different length', () {
       expect(() => kld([0.1, 0.2, 0.7], [0.1, 0.2]), throwsArgumentError);
     });
   });
@@ -27,12 +27,11 @@ void main() {
       seal.genKeys();
       final x = [0.1, 0.2, 0.7];
       final logX = x.map((e) => log(e)).toList();
+      final y = [0.2, 0.3, 0.5];
 
       final cipherX = encryptVecDouble(seal, x);
       final cipherLogX = encryptVecDouble(seal, logX);
 
-      final y = [0.2, 0.3, 0.5];
-      
       List<Ciphertext> cipherSum = kldCiphertext(seal, cipherX, cipherLogX, y);
 
       List<Plaintext> decrypted = cipherSum.map((e) => seal.decrypt(e)).toList();
@@ -42,7 +41,7 @@ void main() {
       near(sum, 0.08512282595722162, eps: 1e-7); // Up-to 7 decimal precision
     });
 
-    test('Different length', () {
+    test('Throw on different length', () {
       Seal seal = Seal('ckks');
       String status = seal.genContext({
         'polyModDegree': 8192,
@@ -57,7 +56,7 @@ void main() {
 
       final cipherX = encryptVecDouble(seal, x);
       final cipherLogX = encryptVecDouble(seal, logX);
-      
+
       expect(() => kldCiphertext(seal, cipherX, cipherLogX, y), throwsArgumentError);
     });
   });
