@@ -1,7 +1,7 @@
+/// Similarity score calculation library for FHE.
+/// This library provides functions to calculate similarity scores between two
+/// encrypted vectors using Fully Homomorphic Encryption (FHE) techniques.
+/// 
 library fhe_similarity_score;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'kl_divergence.dart';

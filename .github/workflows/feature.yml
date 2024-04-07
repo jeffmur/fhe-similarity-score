@@ -1,0 +1,20 @@
+name: Feature Build 🏗️
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  dart-tests:
+    name: Dart Test 🎯
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Flutter 
+        uses: subosito/flutter-action@v2
+
+      - run: dart test
