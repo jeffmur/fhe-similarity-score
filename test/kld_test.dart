@@ -38,7 +38,7 @@ void main() {
       List<double> result = decrypted.map((e) => seal.decodeVecDouble(e, 1).first).toList();
 
       double sum = result.reduce((value, element) => value + element);
-      near(sum, 0.08512282595722162, eps: 1e-7); // Up-to 7 decimal precision
+      near(sum, kld(x, y), eps: 1e-7); // Up-to 7 decimal precision
     });
 
     test('Throw on different length', () {
