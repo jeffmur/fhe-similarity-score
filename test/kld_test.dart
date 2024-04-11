@@ -32,13 +32,13 @@ void main() {
       final cipherX = encryptVecDouble(seal, x);
       final cipherLogX = encryptVecDouble(seal, logX);
 
-      List<Ciphertext> cipherSum = kldCiphertext(seal, cipherX, cipherLogX, y);
+      List<Ciphertext> cipherSum = kldCiphertextVecDouble(seal, cipherX, cipherLogX, y);
 
       List<Plaintext> decrypted = cipherSum.map((e) => seal.decrypt(e)).toList();
       List<double> result = decrypted.map((e) => seal.decodeVecDouble(e, 1).first).toList();
 
       double sum = result.reduce((value, element) => value + element);
-      near(sum, 0.08512282595722162, eps: 1e-7); // Up-to 7 decimal precision
+      near(sum, kld(x, y), eps: 1e-7); // Up-to 7 decimal precision
     });
 
     test('Throw on different length', () {
@@ -57,7 +57,7 @@ void main() {
       final cipherX = encryptVecDouble(seal, x);
       final cipherLogX = encryptVecDouble(seal, logX);
 
-      expect(() => kldCiphertext(seal, cipherX, cipherLogX, y), throwsArgumentError);
+      expect(() => kldCiphertextVecDouble(seal, cipherX, cipherLogX, y), throwsArgumentError);
     });
   });
 }
