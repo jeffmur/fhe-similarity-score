@@ -1,39 +1,7 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+This application empowers you to delve into the world of probability distributions within the Flutter framework. It equips you with essential tools to quantify the differences and similarities between two probability distributions. Here's a breakdown of the key distance metrics you can explore:
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+* Kullback-Leibler Divergence (KLD): Imagine you have a reference distribution, representing the "true" probabilities for a scenario. KLD tells you how much information you would lose (on average) if you used an approximate distribution instead of the true one. In simpler terms, it measures the extra surprise you encounter when using an inaccurate model compared to the actual distribution.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+* Bhattacharyya Distance: This metric takes a more symmetrical approach, providing a measure of similarity between two distributions. A lower Bhattacharyya distance indicates greater resemblance between the distributions.
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
-```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+* Cramer Distance: This metric focuses on the maximum difference between the cumulative distribution functions (CDFs) of two distributions. The CDF tells you the probability that a random variable will be less than or equal to a certain value. So, Cramer distance essentially highlights the largest discrepancy between the probabilities of events occurring under the two distributions.
