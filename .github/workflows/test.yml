@@ -1,13 +1,10 @@
-name: Feature Build 🏗️
+name: Unit Test 🧪
 
-on:
-  push:
-    branches-ignore:
-      - main
+on: push
 
 jobs:
   dart-tests:
-    name: Dart Test 🎯
+    name: Dart 🎯
     strategy:
       matrix:
         unit-test:
