@@ -1,3 +1,4 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* Kullback-Leibler divergence
+* KLD using CKKS scheme (doubles)
