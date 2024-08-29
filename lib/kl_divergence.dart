@@ -1,17 +1,17 @@
 /// Kullback-Leibler Divergence (KLD)
-/// 
+///
 /// Measure of how one probability distribution diverges from a second,
 /// expected probability distribution.
-/// 
+///
 /// Example:
 /// ```dart
 /// import 'package:fhe_similarity_score/kl_divergence.dart';
-/// 
+///
 /// void main() {
 ///  print(kld([0.1, 0.2, 0.7], [0.1, 0.2, 0.7])); // 0
 ///  print(kld([0.1, 0.2, 0.7], [0.2, 0.3, 0.5])); // 0.08512282595722162
 /// }
-/// 
+///
 library kl_divergence;
 
 import 'dart:math';
@@ -51,8 +51,8 @@ Ciphertext kldCiphertextDouble(Afhe fhe, Ciphertext x, Ciphertext logX, double q
 /// See [kld] for more details.
 ///
 List<Ciphertext> kldCiphertextVecDouble(Afhe fhe, List<Ciphertext> x, List<Ciphertext> logX, List<double> q) {
-  if (x.length != logX.length) {
-    throw ArgumentError('The length of x and logX must be the same.');
+  if (x.length != logX.length || x.length != q.length) {
+    throw ArgumentError('The length of x and logX and q must be the same.');
   }
   List<Ciphertext> result = [];
   for (int i = 0; i < x.length; i++) {
