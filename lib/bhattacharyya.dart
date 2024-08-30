@@ -45,7 +45,7 @@ double coefficient(List<double> p, List<double> q) {
 /// Bhattacharyya Distance
 ///
 /// The Bhattacharyya Distance is a measure of dissimilarity between two distributions and
-/// is calculated by taking the negative logarithm of the Bhattacharyya Coefficient.
+/// is calculated by taking the negative logarithm of the Bhattacharyya [coefficient].
 /// The function assumes that both p and q are lists of probabilities with the same length.
 /// If the lists are of different lengths, the function throws an [ArgumentError].
 /// The result is a non-negative value, with smaller values indicating more similar distributions.

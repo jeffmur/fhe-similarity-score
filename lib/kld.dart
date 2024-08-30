@@ -5,7 +5,7 @@
 ///
 /// Example:
 /// ```dart
-/// import 'package:fhe_similarity_score/kl_divergence.dart';
+/// import 'package:fhe_similarity_score/kld.dart';
 ///
 /// void main() {
 ///  print(kld([0.1, 0.2, 0.7], [0.1, 0.2, 0.7])); // 0
@@ -13,7 +13,7 @@
 /// }
 /// ```
 
-library kl_divergence;
+library kld;
 
 import 'dart:math';
 import 'package:fhel/afhe.dart' show Afhe, Plaintext, Ciphertext;
