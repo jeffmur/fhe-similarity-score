@@ -1,4 +1,4 @@
-/// Kullback-Leibler Divergence (KLD)
+/// Kullback-Leibler Divergence
 ///
 /// Measure of how one probability distribution diverges from a second,
 /// expected probability distribution.
@@ -11,7 +11,8 @@
 ///  print(kld([0.1, 0.2, 0.7], [0.1, 0.2, 0.7])); // 0
 ///  print(kld([0.1, 0.2, 0.7], [0.2, 0.3, 0.5])); // 0.08512282595722162
 /// }
-///
+/// ```
+
 library kl_divergence;
 
 import 'dart:math';
