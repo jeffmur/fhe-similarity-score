@@ -6,12 +6,12 @@ void main() {
 
   group("Plaintext", () {
     test('List<Double>', () {
-      expect(kld([0.1, 0.2, 0.7], [0.1, 0.2, 0.7]), 0);
-      expect(kld([0.1, 0.2, 0.7], [0.2, 0.3, 0.5]), 0.08512282595722162);
+      expect(divergence([0.1, 0.2, 0.7], [0.1, 0.2, 0.7]), 0);
+      expect(divergence([0.1, 0.2, 0.7], [0.2, 0.3, 0.5]), 0.08512282595722162);
     });
 
     test('Throw on different length', () {
-      expect(() => kld([0.1, 0.2, 0.7], [0.1, 0.2]), throwsArgumentError);
+      expect(() => divergence([0.1, 0.2, 0.7], [0.1, 0.2]), throwsArgumentError);
     });
   });
 
@@ -32,13 +32,13 @@ void main() {
       final cipherX = encryptVecDouble(seal, x);
       final cipherLogX = encryptVecDouble(seal, logX);
 
-      List<Ciphertext> cipherSum = kldCiphertextVecDouble(seal, cipherX, cipherLogX, y);
+      List<Ciphertext> cipherSum = divergenceOfCiphertextVecDouble(seal, cipherX, cipherLogX, y);
 
       List<Plaintext> decrypted = cipherSum.map((e) => seal.decrypt(e)).toList();
       List<double> result = decrypted.map((e) => seal.decodeVecDouble(e, 1).first).toList();
 
       double sum = result.reduce((value, element) => value + element);
-      near(sum, kld(x, y), eps: 1e-7); // Up-to 7 decimal precision
+      near(sum, divergence(x, y), eps: 1e-7); // Up-to 7 decimal precision
     });
 
     test('Throw on different length', () {
@@ -57,7 +57,8 @@ void main() {
       final cipherX = encryptVecDouble(seal, x);
       final cipherLogX = encryptVecDouble(seal, logX);
 
-      expect(() => kldCiphertextVecDouble(seal, cipherX, cipherLogX, y), throwsArgumentError);
+      expect(() => divergenceOfCiphertextVecDouble(seal, cipherX, cipherLogX, y),
+          throwsArgumentError);
     });
   });
 }

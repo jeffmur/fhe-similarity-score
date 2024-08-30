@@ -16,12 +16,11 @@
 //    print(coefficient([0.1, 0.2, 0.7], [0.1, 0.2, 0.7])); // 1.0
 //    print(coefficient([0.1, 0.2, 0.7], [0.2, 0.3, 0.5])); // 0.9779783088255889
 /// }
-/// ```
 
 library bhattacharyya;
 
 import 'dart:math';
-import 'package:fhel/afhe.dart' show Afhe, Ciphertext;
+import 'package:fhel/afhe.dart' show Afhe, Plaintext, Ciphertext;
 
 /// Bhattacharyya Coefficient
 ///
@@ -56,23 +55,27 @@ double distance(List<double> p, List<double> q) {
 
 /// Bhattacharyya Distance for encrypted double
 ///
+/// Apply the negative logarithm of [Plaintext] before returning.
+///
 /// See [distance] for more details.
 ///
-Ciphertext distanceCiphertextDouble(Afhe fhe, Ciphertext sqrtX, double sqrtY) {
+Ciphertext distanceOfCiphertextDouble(Afhe fhe, Ciphertext sqrtX, double sqrtY) {
   return fhe.multiplyPlain(sqrtX, fhe.encodeDouble(sqrtY));
 }
 
 /// Bhattacharyya Distance for encrypted list of doubles
 ///
+/// Apply the negative logarithm of the sum of List<[Plaintext]> before returning.
+///
 /// See [distance] for more details.
 ///
-List<Ciphertext> distanceCiphertextVecDouble(Afhe fhe, List<Ciphertext> sqrtX, List<double> sqrtY) {
+List<Ciphertext> distanceOfCiphertextVecDouble(Afhe fhe, List<Ciphertext> sqrtX, List<double> sqrtY) {
   if (sqrtX.length != sqrtY.length) {
     throw ArgumentError('The length of sqrtX and sqrtY must be the same.');
   }
   List<Ciphertext> result = [];
   for (int i = 0; i < sqrtX.length; i++) {
-    result.add(distanceCiphertextDouble(fhe, sqrtX[i], sqrtY[i]));
+    result.add(distanceOfCiphertextDouble(fhe, sqrtX[i], sqrtY[i]));
   }
   return result;
 }
