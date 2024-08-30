@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:fhe_similarity_score/kl_divergence.dart';
+import 'package:fhe_similarity_score/kld.dart';
 import 'test_utils.dart';
 
 void main() {

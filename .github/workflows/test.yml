@@ -7,13 +7,15 @@ jobs:
     name: Dart 🎯
     strategy:
       matrix:
-        unit-test:
+        test:
           - os: ubuntu-latest
             file: libfhel.so
+            platform: linux
           - os: macos-latest
             file: libfhel.dylib
+            platform: macos
 
-    runs-on: ${{ matrix.unit-test.os }}
+    runs-on: ${{ matrix.test.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,19 +23,6 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
 
-      - name: Checkout fhel
-        uses: actions/checkout@v4
-        with:
-          repository: jeffmur/fhel
-          path: fhel
-          submodules: 'true'
-
-      - name: Compile fhel
-        run: |
-          mkdir bin
-          cd fhel
-          make dist
-          cp dart/bin/${{ matrix.unit-test.file }} ../bin/${{ matrix.unit-test.file }}
-          echo "Generated 👉 $(ls ../bin)"
-
+      - run: dart pub get
+      - run: dart run fhel:setup ${{ matrix.test.platform }}
       - run: dart test
