@@ -8,8 +8,8 @@
 /// import 'package:fhe_similarity_score/kld.dart';
 ///
 /// void main() {
-///  print(kld([0.1, 0.2, 0.7], [0.1, 0.2, 0.7])); // 0
-///  print(kld([0.1, 0.2, 0.7], [0.2, 0.3, 0.5])); // 0.08512282595722162
+///  print(divergence([0.1, 0.2, 0.7], [0.1, 0.2, 0.7])); // 0
+///  print(divergence([0.1, 0.2, 0.7], [0.2, 0.3, 0.5])); // 0.08512282595722162
 /// }
 
 library kld;
