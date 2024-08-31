@@ -35,29 +35,20 @@ double distance(List<double> p, List<double> q) {
   return sqrt(sum);
 }
 
-/// Cramer Distance for encrypted double
-///
-/// Apply the square root of the [Plaintext] before returning.
-///
-/// See [distance] for more details.
-///
-Ciphertext distanceOfCiphertextDouble(Afhe fhe, Ciphertext x, double y) {
-  return fhe.square(fhe.subtractPlain(x, fhe.encodeDouble(y)));
-}
-
 /// Cramer Distance for encrypted list of doubles
 ///
 /// Apply the square root of the sum of List<[Plaintext]> before returning.
 ///
 /// See [distance] for more details.
 ///
-List<Ciphertext> distanceOfCiphertextVecDouble(Afhe fhe, List<Ciphertext> x, List<double> y) {
+List<Ciphertext> distanceOfCiphertextVecDouble(
+    Afhe fhe, List<Ciphertext> x, List<double> y) {
   if (x.length != y.length) {
     throw ArgumentError('The length of x and y must be the same.');
   }
   List<Ciphertext> result = [];
   for (int i = 0; i < x.length; i++) {
-    result.add(distanceOfCiphertextDouble(fhe, x[i], y[i]));
+    result.add(fhe.square(fhe.subtractPlain(x[i], fhe.encodeDouble(y[i]))));
   }
   return result;
 }

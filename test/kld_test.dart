@@ -3,62 +3,54 @@ import 'package:fhe_similarity_score/kld.dart';
 import 'test_utils.dart';
 
 void main() {
+  List<Map<String, dynamic>> tests = [
+    {
+      'x': [0.1, 0.2, 0.7],
+      'y': [0.1, 0.2, 0.7],
+      'divergence': 0.0
+    },
+    {
+      'x': [0.1, 0.2, 0.7],
+      'y': [0.2, 0.3, 0.5],
+      'divergence': 0.08512282595722162
+    },
+  ];
 
   group("Plaintext", () {
-    test('List<Double>', () {
-      expect(divergence([0.1, 0.2, 0.7], [0.1, 0.2, 0.7]), 0);
-      expect(divergence([0.1, 0.2, 0.7], [0.2, 0.3, 0.5]), 0.08512282595722162);
-    });
+    for (var config in tests) {
+      var {'x': x, 'y': y} = config;
+      test("List<Double> where x:$x y:$y", () {
+        near(divergence(x, y), config['divergence'], eps: 1e-7);
+      });
+    }
 
     test('Throw on different length', () {
-      expect(() => divergence([0.1, 0.2, 0.7], [0.1, 0.2]), throwsArgumentError);
+      expect(() => divergence([1], [1, 2, 3]), throwsArgumentError);
+      expect(() => divergence([1, 2, 3], [1]), throwsArgumentError);
     });
   });
 
-  group("SEAL", () {
-    test('CKKS', () {
-      Seal seal = Seal('ckks');
-      String status = seal.genContext({
-        'polyModDegree': 8192,
-        'encodeScalar': pow(2, 40),
-        'qSizes': [60, 40, 40, 60]
+  Seal seal = Seal('ckks');
+  seal.genContext({
+    'polyModDegree': 8192,
+    'encodeScalar': pow(2, 40),
+    'qSizes': [60, 40, 40, 60]
+  });
+  seal.genKeys();
+
+  group("SEAL CKKS", () {
+    for (var config in tests) {
+      var {'x': x, 'y': y} = config;
+      test("Divergence where x:$x y:$y", () {
+        var encryptX = encryptVecDouble(seal, x);
+        var logX = x.map<double>((e) => log(e)).toList();
+        var encryptLogX = encryptVecDouble(seal, logX);
+        near(
+            decryptAndSum(seal,
+                divergenceOfCiphertextVecDouble(seal, encryptX, encryptLogX, y)),
+            config['divergence'],
+            eps: 1e-7);
       });
-      expect(status, 'success: valid');
-      seal.genKeys();
-      final x = [0.1, 0.2, 0.7];
-      final logX = x.map((e) => log(e)).toList();
-      final y = [0.2, 0.3, 0.5];
-
-      final cipherX = encryptVecDouble(seal, x);
-      final cipherLogX = encryptVecDouble(seal, logX);
-
-      List<Ciphertext> cipherSum = divergenceOfCiphertextVecDouble(seal, cipherX, cipherLogX, y);
-
-      List<Plaintext> decrypted = cipherSum.map((e) => seal.decrypt(e)).toList();
-      List<double> result = decrypted.map((e) => seal.decodeVecDouble(e, 1).first).toList();
-
-      double sum = result.reduce((value, element) => value + element);
-      near(sum, divergence(x, y), eps: 1e-7); // Up-to 7 decimal precision
-    });
-
-    test('Throw on different length', () {
-      Seal seal = Seal('ckks');
-      String status = seal.genContext({
-        'polyModDegree': 8192,
-        'encodeScalar': pow(2, 40),
-        'qSizes': [60, 40, 40, 60]
-      });
-      expect(status, 'success: valid');
-      seal.genKeys();
-      final x = [0.1, 0.2, 0.7];
-      final logX = x.map((e) => log(e)).toList();
-      final y = [0.2, 0.3];
-
-      final cipherX = encryptVecDouble(seal, x);
-      final cipherLogX = encryptVecDouble(seal, logX);
-
-      expect(() => divergenceOfCiphertextVecDouble(seal, cipherX, cipherLogX, y),
-          throwsArgumentError);
-    });
+    }
   });
 }

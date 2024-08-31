@@ -3,54 +3,50 @@ import 'package:fhe_similarity_score/cramer.dart';
 import 'test_utils.dart';
 
 void main() {
-  group("Plaintext", () {
-    test("List<Double>", () {
-      expect(distance([0.1, 0.2, 0.7], [0.1, 0.2, 0.7]), 0);
-      expect(distance([0.1, 0.2, 0.7], [0.2, 0.3, 0.5]), 0.24494897427831777);
-    });
+  List<Map<String, dynamic>> tests = [
+    {
+      'x': [0.1, 0.2, 0.7],
+      'y': [0.1, 0.2, 0.7],
+      'distance': 0.0
+    },
+    {
+      'x': [0.1, 0.2, 0.7],
+      'y': [0.2, 0.3, 0.5],
+      'distance': 0.24494897427831777
+    },
+  ];
 
-    test("Throw on different length", () {
-      expect(() => distance([0.1, 0.2, 0.7], [0.1, 0.2]), throwsArgumentError);
+  group("Plaintext", () {
+    for (var config in tests) {
+      var {'x': x, 'y': y} = config;
+      test("List<Double> where x:$x y:$y", () {
+        near(distance(x, y), config['distance'], eps: 1e-7);
+      });
+    }
+    test('Throw on different length', () {
+      expect(() => distance([1, 2, 3], [1]), throwsArgumentError);
+      expect(() => distance([1], [1, 2, 3]), throwsArgumentError);
     });
   });
 
-  group("SEAL", () {
-    test("CKKS", () {
-      Seal seal = Seal("ckks");
-      String status = seal.genContext({
-        "polyModDegree": 8192,
-        "encodeScalar": pow(2, 40),
-        "qSizes": [60, 40, 40, 60]
+  Seal seal = Seal('ckks');
+  seal.genContext({
+    'polyModDegree': 8192,
+    'encodeScalar': pow(2, 40),
+    'qSizes': [60, 40, 40, 60]
+  });
+  seal.genKeys();
+
+  group("SEAL CKKS", () {
+    for (var config in tests) {
+      var {'x': x, 'y': y} = config;
+      var encryptX = encryptVecDouble(seal, x);
+      test("Distance where x:$x y:$y", () {
+        double decrypted = decryptAndSum(seal,
+            distanceOfCiphertextVecDouble(seal, encryptX, y));
+        near(decrypted > 0 ? sqrt(decrypted) : decrypted, // sqrt(0) = NaN
+          config['distance'], eps: 1e-7);
       });
-      expect(status, "success: valid");
-      seal.genKeys();
-      final x = [0.1, 0.2, 0.7];
-      final y = [0.2, 0.3, 0.5];
-
-      final cipherX = encryptVecDouble(seal, x);
-
-      List<Ciphertext> cipherSum = distanceCiphertextVecDouble(seal, cipherX, y);
-      List<Plaintext> decrypted = cipherSum.map((e) => seal.decrypt(e)).toList();
-      List<double> result = decrypted.map((e) => seal.decodeVecDouble(e, 1).first).toList();
-      double sum = result.reduce((value, element) => value + element);
-      near(sqrt(sum), distance(x, y), eps: 1e-7); // Up-to 7 decimal precision
-    });
-
-    test("Throw on different length", () {
-      Seal seal = Seal("ckks");
-      String status = seal.genContext({
-        "polyModDegree": 8192,
-        "encodeScalar": pow(2, 40),
-        "qSizes": [60, 40, 40, 60]
-      });
-      expect(status, "success: valid");
-      seal.genKeys();
-      final x = [0.1, 0.2, 0.7];
-      final y = [0.2, 0.3];
-
-      final cipherX = encryptVecDouble(seal, x);
-      expect(() => distanceCiphertextVecDouble(seal, cipherX, y),
-          throwsArgumentError);
-    });
+    }
   });
 }

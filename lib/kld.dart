@@ -36,11 +36,12 @@ double divergence(List<double> p, List<double> q) {
   return sum;
 }
 
-/// Kullback-Leibler Divergence for encrypted double
+/// Kullback-Leibler Divergence between [Ciphertext] and [double]
 ///
 /// See [divergence] for more details.
 ///
-Ciphertext divergenceOfCiphertextDouble(Afhe fhe, Ciphertext x, Ciphertext logX, double q) {
+Ciphertext divergenceOfCiphertextDouble(
+    Afhe fhe, Ciphertext x, Ciphertext logX, double q) {
   Plaintext logQ = fhe.encodeDouble(log(q));
   Ciphertext subLog = fhe.subtractPlain(logX, logQ);
   return fhe.multiply(x, subLog);
@@ -52,7 +53,8 @@ Ciphertext divergenceOfCiphertextDouble(Afhe fhe, Ciphertext x, Ciphertext logX,
 ///
 /// See [divergence] for more details.
 ///
-List<Ciphertext> divergenceOfCiphertextVecDouble(Afhe fhe, List<Ciphertext> x, List<Ciphertext> logX, List<double> q) {
+List<Ciphertext> divergenceOfCiphertextVecDouble(
+    Afhe fhe, List<Ciphertext> x, List<Ciphertext> logX, List<double> q) {
   if (x.length != logX.length || x.length != q.length) {
     throw ArgumentError('The length of x and logX and q must be the same.');
   }
