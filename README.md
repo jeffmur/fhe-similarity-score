@@ -4,4 +4,5 @@ Fully Homomorphic Encryption (FHE) is a powerful tool for privacy-preserving com
 
 ## Algorithms
 * Kullback-Leibler Divergence (KLD)
-* Bhattacharyya Distance (BD)
+* Bhattacharyya Coefficient (BC)
+* Cramer-von Mises Distance (CvM)

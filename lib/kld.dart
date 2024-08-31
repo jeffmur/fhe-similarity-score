@@ -8,10 +8,9 @@
 /// import 'package:fhe_similarity_score/kld.dart';
 ///
 /// void main() {
-///  print(kld([0.1, 0.2, 0.7], [0.1, 0.2, 0.7])); // 0
-///  print(kld([0.1, 0.2, 0.7], [0.2, 0.3, 0.5])); // 0.08512282595722162
+///  print(divergence([0.1, 0.2, 0.7], [0.1, 0.2, 0.7])); // 0
+///  print(divergence([0.1, 0.2, 0.7], [0.2, 0.3, 0.5])); // 0.08512282595722162
 /// }
-/// ```
 
 library kld;
 
@@ -23,7 +22,7 @@ import 'package:fhel/afhe.dart' show Afhe, Plaintext, Ciphertext;
 /// The Kullback-Leibler Divergence (KLD) is a measure of how one probability
 /// distribution diverges from a second, expected probability distribution.
 ///
-double kld(List<double> p, List<double> q) {
+double divergence(List<double> p, List<double> q) {
   if (p.length != q.length) {
     throw ArgumentError('The length of p and q must be the same.');
   }
@@ -37,11 +36,12 @@ double kld(List<double> p, List<double> q) {
   return sum;
 }
 
-/// Kullback-Leibler Divergence for encrypted double
+/// Kullback-Leibler Divergence between [Ciphertext] and [double]
 ///
-/// See [kld] for more details.
+/// See [divergence] for more details.
 ///
-Ciphertext kldCiphertextDouble(Afhe fhe, Ciphertext x, Ciphertext logX, double q) {
+Ciphertext divergenceOfCiphertextDouble(
+    Afhe fhe, Ciphertext x, Ciphertext logX, double q) {
   Plaintext logQ = fhe.encodeDouble(log(q));
   Ciphertext subLog = fhe.subtractPlain(logX, logQ);
   return fhe.multiply(x, subLog);
@@ -49,15 +49,18 @@ Ciphertext kldCiphertextDouble(Afhe fhe, Ciphertext x, Ciphertext logX, double q
 
 /// Kullback-Leibler Divergence for encrypted list of doubles
 ///
-/// See [kld] for more details.
+/// Apply the sum of List<[Plaintext]> before returning.
 ///
-List<Ciphertext> kldCiphertextVecDouble(Afhe fhe, List<Ciphertext> x, List<Ciphertext> logX, List<double> q) {
+/// See [divergence] for more details.
+///
+List<Ciphertext> divergenceOfCiphertextVecDouble(
+    Afhe fhe, List<Ciphertext> x, List<Ciphertext> logX, List<double> q) {
   if (x.length != logX.length || x.length != q.length) {
     throw ArgumentError('The length of x and logX and q must be the same.');
   }
   List<Ciphertext> result = [];
   for (int i = 0; i < x.length; i++) {
-    result.add(kldCiphertextDouble(fhe, x[i], logX[i], q[i]));
+    result.add(divergenceOfCiphertextDouble(fhe, x[i], logX[i], q[i]));
   }
   return result;
 }

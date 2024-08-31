@@ -3,64 +3,57 @@ import 'package:fhe_similarity_score/bhattacharyya.dart';
 import 'test_utils.dart';
 
 void main() {
-  group("Plaintext", () {
-    test('List<Double>', () {
-      expect(distance([0.1, 0.2, 0.7], [0.1, 0.2, 0.7]), 0);
-      expect(distance([0.1, 0.2, 0.7], [0.2, 0.3, 0.5]), 0.022267788308219707);
-      expect(coefficient([0.1, 0.2, 0.7], [0.1, 0.2, 0.7]), 1.0);
-      expect(coefficient([0.1, 0.2, 0.7], [0.2, 0.3, 0.5]), 0.9779783088255889);
-    });
+  List<Map<String, dynamic>> tests = [
+    {
+      'x': [0.1, 0.2, 0.7],
+      'y': [0.1, 0.2, 0.7],
+      'coefficent': 1.0
+    },
+    {
+      'x': [0.1, 0.2, 0.7],
+      'y': [0.2, 0.3, 0.5],
+      'coefficent': 0.9779783088255889
+    },
+  ];
 
+  group("Plaintext List<Double>", () {
+    for (var config in tests) {
+      var {'x': x, 'y': y} = config;
+      test("coefficent where x:$x y:$y", () {
+        near(coefficient(x, y), config['coefficent'], eps: 1e-7);
+      });
+    }
     test('Throw on different length', () {
-      expect(() => coefficient([0.1, 0.2, 0.7], [0.1, 0.2]), throwsArgumentError);
-      expect(() => distance([0.1, 0.2, 0.7], [0.1, 0.2]), throwsArgumentError);
+      expect(() => coefficient([1, 2, 3], [1]), throwsArgumentError);
     });
   });
 
-  group("SEAL", () {
-    test("CKKS", () {
-      Seal seal = Seal('ckks');
-      String status = seal.genContext({
-        'polyModDegree': 8192,
-        'encodeScalar': pow(2, 40),
-        'qSizes': [60, 40, 40, 60]
+  Seal seal = Seal('ckks');
+  seal.genContext({
+    'polyModDegree': 8192,
+    'encodeScalar': pow(2, 40),
+    'qSizes': [60, 40, 40, 60]
+  });
+  seal.genKeys();
+
+  group("SEAL CKKS", () {
+    for (var config in tests) {
+      var {'x': x, 'y': y} = config;
+      final sqrtX = x.map<double>((e) => sqrt(e)).toList();
+      final sqrtY = y.map<double>((e) => sqrt(e)).toList();
+      var encryptSqrtX = encryptVecDouble(seal, sqrtX);
+      test("Coefficent where x:$x y:$y", () {
+        near(
+            decryptedSumOfDoubles(seal,
+                coefficientOfCiphertextVecDouble(seal, encryptSqrtX, sqrtY)),
+            config['coefficent'],
+            eps: 1e-7);
       });
-      expect(status, 'success: valid');
-      seal.genKeys();
-      final x = [0.1, 0.2, 0.7];
-      final sqrtX = x.map((e) => sqrt(e)).toList();
-      final y = [0.2, 0.3, 0.5];
-      final sqrtY = y.map((e) => sqrt(e)).toList();
 
-      final cipherSqrtX = encryptVecDouble(seal, sqrtX);
-
-      List<Ciphertext> cipherSum = distanceCiphertextVecDouble(seal, cipherSqrtX, sqrtY);
-      List<Plaintext> decrypted = cipherSum.map((e) => seal.decrypt(e)).toList();
-      List<double> result = decrypted.map((e) => seal.decodeVecDouble(e, 1).first).toList();
-
-      double sum = result.reduce((value, element) => value + element);
-      double logSum = -log(sum);
-      near(logSum, distance(x, y), eps: 1e-7); // Up-to 7 decimal precision
-    });
-
-    test("Throw on different length", () {
-      Seal seal = Seal('ckks');
-      String status = seal.genContext({
-        'polyModDegree': 8192,
-        'encodeScalar': pow(2, 40),
-        'qSizes': [60, 40, 40, 60]
+      test("Throw on different length", () {
+        expect(() => coefficientOfCiphertextVecDouble(seal, encryptSqrtX, y + [0.0]),
+            throwsArgumentError);
       });
-      expect(status, 'success: valid');
-      seal.genKeys();
-      final x = [0.1, 0.2, 0.7];
-      final sqrtX = x.map((e) => sqrt(e)).toList();
-      final y = [0.2, 0.3];
-      final sqrtY = y.map((e) => sqrt(e)).toList();
-
-      final cipherSqrtX = encryptVecDouble(seal, sqrtX);
-
-      expect(() => distanceCiphertextVecDouble(seal, cipherSqrtX, sqrtY),
-          throwsArgumentError);
-    });
+    }
   });
 }
