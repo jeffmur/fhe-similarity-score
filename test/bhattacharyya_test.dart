@@ -49,6 +49,11 @@ void main() {
             config['coefficent'],
             eps: 1e-7);
       });
+
+      test("Throw on different length", () {
+        expect(() => coefficientOfCiphertextVecDouble(seal, encryptSqrtX, y + [0.0]),
+            throwsArgumentError);
+      });
     }
   });
 }

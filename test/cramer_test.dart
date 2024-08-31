@@ -47,6 +47,11 @@ void main() {
         near(decrypted > 0 ? sqrt(decrypted) : decrypted, // sqrt(0) = NaN
           config['distance'], eps: 1e-7);
       });
+
+      test("Throw on different length", () {
+        expect(() => distanceOfCiphertextVecDouble(seal, encryptX, y + [0.0]),
+            throwsArgumentError);
+      });
     }
   });
 }

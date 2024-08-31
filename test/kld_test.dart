@@ -41,15 +41,20 @@ void main() {
   group("SEAL CKKS", () {
     for (var config in tests) {
       var {'x': x, 'y': y} = config;
+      var encryptX = encryptVecDouble(seal, x);
+      var logX = x.map<double>((e) => log(e)).toList();
+      var encryptLogX = encryptVecDouble(seal, logX);
       test("Divergence where x:$x y:$y", () {
-        var encryptX = encryptVecDouble(seal, x);
-        var logX = x.map<double>((e) => log(e)).toList();
-        var encryptLogX = encryptVecDouble(seal, logX);
         near(
             decryptAndSum(seal,
                 divergenceOfCiphertextVecDouble(seal, encryptX, encryptLogX, y)),
             config['divergence'],
             eps: 1e-7);
+      });
+
+      test("Throw on different length", () {
+        expect(() => divergenceOfCiphertextVecDouble(seal, encryptX, encryptLogX, y + [0.0]),
+            throwsArgumentError);
       });
     }
   });
