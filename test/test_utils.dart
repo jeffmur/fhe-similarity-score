@@ -30,9 +30,9 @@ List<Ciphertext> encryptVecDouble(Afhe fhe, List<double> vec) {
   return vec.map((e) => fhe.encrypt(fhe.encodeDouble(e))).toList();
 }
 
-/// Sum of a list of doubles.
+/// Sum of a list of [Ciphertext] doubles.
 ///
-double decryptAndSum(Afhe fhe, List<Ciphertext> encrypted) {
+double decryptedSumOfDoubles(Afhe fhe, List<Ciphertext> encrypted) {
   return encrypted
       .map((e) => fhe.decrypt(e)) // List<Ciphertext> -> List<Plaintext>
       .map((e) => fhe.decodeVecDouble(e, 1).first) // List<Plaintext> -> List<double>

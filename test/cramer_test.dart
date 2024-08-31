@@ -42,9 +42,9 @@ void main() {
       var {'x': x, 'y': y} = config;
       var encryptX = encryptVecDouble(seal, x);
       test("Distance where x:$x y:$y", () {
-        double decrypted = decryptAndSum(seal,
-            distanceOfCiphertextVecDouble(seal, encryptX, y));
-        near(decrypted > 0 ? sqrt(decrypted) : decrypted, // sqrt(0) = NaN
+        near(
+            sqrt(decryptedSumOfDoubles(seal,
+                distanceOfCiphertextVecDouble(seal, encryptX, y)).abs()),
           config['distance'], eps: 1e-7);
       });
 

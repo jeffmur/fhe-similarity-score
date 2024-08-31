@@ -46,7 +46,7 @@ void main() {
       var encryptLogX = encryptVecDouble(seal, logX);
       test("Divergence where x:$x y:$y", () {
         near(
-            decryptAndSum(seal,
+            decryptedSumOfDoubles(seal,
                 divergenceOfCiphertextVecDouble(seal, encryptX, encryptLogX, y)),
             config['divergence'],
             eps: 1e-7);

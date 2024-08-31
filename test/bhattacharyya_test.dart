@@ -44,7 +44,7 @@ void main() {
       var encryptSqrtX = encryptVecDouble(seal, sqrtX);
       test("Coefficent where x:$x y:$y", () {
         near(
-            decryptAndSum(seal,
+            decryptedSumOfDoubles(seal,
                 coefficientOfCiphertextVecDouble(seal, encryptSqrtX, sqrtY)),
             config['coefficent'],
             eps: 1e-7);
