@@ -22,6 +22,10 @@ void main() {
       test("coefficent where x:$x y:$y", () {
         near(coefficient(x, y), config['coefficent'], eps: 1e-7);
       });
+
+      test("Symmetric Measure", () {
+        expect(coefficient(x, y), coefficient(y, x));
+      });
     }
     test('Throw on different length', () {
       expect(() => coefficient([1, 2, 3], [1]), throwsArgumentError);

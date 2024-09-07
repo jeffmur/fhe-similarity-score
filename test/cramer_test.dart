@@ -22,6 +22,10 @@ void main() {
       test("List<Double> where x:$x y:$y", () {
         near(distance(x, y), config['distance'], eps: 1e-7);
       });
+
+      test("Symmetric Measure", () {
+        expect(distance(x, y), distance(y, x));
+      });
     }
     test('Throw on different length', () {
       expect(() => distance([1, 2, 3], [1]), throwsArgumentError);
@@ -43,9 +47,11 @@ void main() {
       var encryptX = encryptVecDouble(seal, x);
       test("Distance where x:$x y:$y", () {
         near(
-            sqrt(decryptedSumOfDoubles(seal,
-                distanceOfCiphertextVecDouble(seal, encryptX, y)).abs()),
-          config['distance'], eps: 1e-7);
+            sqrt(decryptedSumOfDoubles(
+                    seal, distanceOfCiphertextVecDouble(seal, encryptX, y))
+                .abs()),
+            config['distance'],
+            eps: 1e-7);
       });
 
       test("Throw on different length", () {

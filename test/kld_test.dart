@@ -13,7 +13,7 @@ void main() {
       'x': [0.1, 0.2, 0.7],
       'y': [0.2, 0.3, 0.5],
       'divergence': 0.08512282595722162
-    },
+    }
   ];
 
   group("Plaintext", () {
@@ -21,6 +21,12 @@ void main() {
       var {'x': x, 'y': y} = config;
       test("List<Double> where x:$x y:$y", () {
         near(divergence(x, y), config['divergence'], eps: 1e-7);
+      });
+
+      test("Asymmetric Measure", () {
+        if (config['divergence'] != 0.0) {
+          expect(divergence(x, y), isNot(divergence(y, x)));
+        }
       });
     }
 
@@ -46,14 +52,18 @@ void main() {
       var encryptLogX = encryptVecDouble(seal, logX);
       test("Divergence where x:$x y:$y", () {
         near(
-            decryptedSumOfDoubles(seal,
-                divergenceOfCiphertextVecDouble(seal, encryptX, encryptLogX, y)),
+            decryptedSumOfDoubles(
+                seal,
+                divergenceOfCiphertextVecDouble(
+                    seal, encryptX, encryptLogX, y)),
             config['divergence'],
             eps: 1e-7);
       });
 
       test("Throw on different length", () {
-        expect(() => divergenceOfCiphertextVecDouble(seal, encryptX, encryptLogX, y + [0.0]),
+        expect(
+            () => divergenceOfCiphertextVecDouble(
+                seal, encryptX, encryptLogX, y + [0.0]),
             throwsArgumentError);
       });
     }
