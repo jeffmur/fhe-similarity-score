@@ -28,7 +28,7 @@ double divergence(List<double> p, List<double> q) {
   }
   double sum = 0;
   for (int i = 0; i < p.length; i++) {
-    if (p[i] == 0) {
+    if (p[i] == 0 || q[i] == 0) {
       continue;
     }
     sum += p[i] * log(p[i] / q[i]);
