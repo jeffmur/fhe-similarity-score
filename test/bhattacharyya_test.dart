@@ -14,6 +14,11 @@ void main() {
       'y': [0.2, 0.3, 0.5],
       'coefficent': 0.9779783088255889
     },
+    {
+      'y': [0.1, 0.2, 0.7],
+      'x': [0.2, 0.3, 0.5],
+      'coefficent': 0.9779783088255889 // Symmetric (same score as above)
+    },
   ];
 
   group("Plaintext List<Double>", () {
