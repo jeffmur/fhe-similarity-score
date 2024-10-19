@@ -26,11 +26,12 @@ double divergence(List<double> p, List<double> q) {
   if (p.length != q.length) {
     throw ArgumentError('The length of p and q must be the same.');
   }
+  double epsilon = 1e-12;
   double sum = 0;
   for (int i = 0; i < p.length; i++) {
-    if (p[i] == 0 || q[i] == 0) {
-      continue;
-    }
+    // Avoid log(0) by adding epsilon
+    p[i] = p[i] == 0 ? epsilon : p[i];
+    q[i] = q[i] == 0 ? epsilon : q[i];
     sum += p[i] * log(p[i] / q[i]);
   }
   return sum;
