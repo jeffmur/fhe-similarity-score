@@ -17,7 +17,12 @@ void main() {
     {
       'y': [0.1, 0.2, 0.7],
       'x': [0.2, 0.3, 0.5],
-      'divergence': 0.09203285023383187 // Asymmetric (from above)
+      'divergence': 0.09203285031760244 // Asymmetric (from above)
+    },
+    {
+      'x': [0.0, 1.0, 2.0],
+      'y': [3.0, 2.0, 0.0],
+      'divergence': 55.95518938697226
     }
   ];
 
