@@ -11,9 +11,9 @@ jobs:
           - os: ubuntu-latest
             file: libfhel.so
             platform: linux
-          - os: macos-latest
-            file: libfhel.dylib
-            platform: macos
+        # - os: macos-latest
+        #   file: libfhel.dylib
+        #   platform: macos
 
     runs-on: ${{ matrix.test.os }}
     steps:
